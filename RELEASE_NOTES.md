@@ -1,43 +1,42 @@
-# InputLab v1.0.0 — mouse, controller, USB map, power and the wireless doctor in one app
+# InputLab v1.1.0 — USB timing: your mouse at the USB controller and at the app, on one clock
 
-**The first InputLab release. InputLab merges AleksMouseTester and AleksControllerTester into one free Windows
-tool: it measures how evenly your mouse's and your controller's reports arrive in Windows, shows where every USB
-device hangs and what is worth checking, explains the power settings that are said to slow input (and changes
-them on a click, with Restore), and helps find why a wireless mouse stutters.**
+**InputLab 1.1.0 adds USB timing to the Mouse level. On its USB timing tab, press "Start USB Timing" and see every report twice: when
+Windows' USB stack received it, and when it reached InputLab — the way a game gets it. Every hiccup is marked where it
+started: before Windows (the mouse, its radio or its sensor) or inside your PC.**
 
-## What's in it
+## What's new
 
-- **Controller** — everything AleksControllerTester 1.0.3 had: the live view, the quick tests **Stick Motion**,
-  **Idle Drift**, **Button Burst**, **Trigger Sweep** and **Stick Range**, Advanced / Lab, Timeline and Compare.
-- **Mouse** — a live view, **Scan (move it)**, the quick tests **Mouse Motion** (the delivery score), **Mouse
-  Idle** and **Mouse Click Burst**, with Result, Timeline (every interval, a button lane) and Compare.
-- **System › USB map** — every USB controller, hub, socket and device with its link speed and polling interval.
-  One sentence says how things stand; a list says what is worth checking and why, with its source. No score. Re-plug
-  a device and the map reads itself again and names what moved. Tell it where a socket sits and what is next to it,
-  and the radio checks can use that.
-- **System › Power** — USB selective suspend, USB 3 and PCI Express link power management, processor states, core
-  parking, Energy Saver and whether Windows may switch your input devices off: what each does, what is actually
-  known, where to change it — or one click, with the original saved first and **Restore**.
-- **Wireless** — pick your receiver: its way into the PC, two questions only you can answer, the Wi-Fi band and the
-  2.4 GHz crowd around you, active Bluetooth devices, the dropout pattern of your last Mouse Motion run, and a
-  **before / after** of two runs, even across a socket change.
-- **Import** — "Import from AleksMouseTester" and "Import from AleksControllerTester" on the Compare pages copy your
-  old runs in. The old files are only read.
-- **♥ Support** at the top right of every level, as before: voluntary, nothing is unlocked by it.
+- **USB timing (Lab).** On the Mouse level's new **USB timing** tab, the start button reads **Start USB Timing**: the
+  quick test set in the setup row, and it also records the USB stack's own completion events (Event Tracing for Windows; Windows asks
+  for administrator rights for each such test). On the other tabs Start Quick Test stays without it, so your
+  score is measured undisturbed. Afterwards every report is paired with its USB completion — on the
+  developer's 8000 Hz receiver, every single one.
+- **One clock, three lanes.** The time between reports at the USB controller, how long Windows took to hand each report
+  to the app, and the time between reports at InputLab. Each lane centres its typical value, the numbers follow the
+  zoom, and single reports appear as dots when you zoom in. Zoom buttons (whole run down to 1 ms), wheel zoom down to
+  half a millisecond, Shift+drag to zoom to a range, an overview strip, hover for one report's numbers, CSV export.
+- **The chain in one picture:** your mouse › USB controller › InputLab, with the numbers on each link
+  ("every 125 µs", "hand-over 50 µs typical, 99 % within 95 µs").
+- **A measurement check.** The recording makes Windows do extra work on the path InputLab measures. So every run with
+  it is compared with your latest runs of the same mouse and test without it, and the tab says plainly whether the
+  recording changed anything. Such runs are marked and kept apart in Compare. The trace asks Windows only for the events
+  it reads, which halves its extra work.
+- **Fixed:** mouse sessions now name their real capture path (Raw Input mouse); 1.0.0 labelled them with the
+  controller's model. Older runs show the corrected label; measurements and scores are unchanged.
 
-## Honest by design
+## Thanks
 
-InputLab reports **Windows host input-delivery timing** — not the device's internal scan rate or USB polling, not
-click-to-screen latency. The USB map and the power view give no score: they say what is fine, what is worth
-checking and what cannot be told. A change counts when the quick test before and after shows it.
+A big thank-you to [XBAB-Tech](https://github.com/XBAB-Tech) for pointing out how much ETW-based timing adds to a
+mouse test. Their [MousePlotter](https://github.com/XBAB-Tech/MousePlotter) pairs the mouse's USB completions from
+Event Tracing for Windows with Raw Input, and that is what got InputLab's USB timing started. InputLab's
+implementation is its own; no code was taken.
 
-## Tested hardware and limits
+## Honest limits
 
-One controller (GameSir G7 HE, USB cable, Xbox-compatible HID + XInput) and one wireless mouse on an 8000 Hz
-receiver, on one Windows 11 PC with an AMD processor. The Wi-Fi part of the Wireless level has not yet been
-verified on a PC with Wi-Fi; Bluetooth devices, more controllers and more mice are not tested yet. Since Windows 11
-24H2 the Wi-Fi list needs location access for desktop apps (the page says where to switch it on). The full list is
-in the README (**Tested hardware**, **Known limitations**, **Is it safe?**).
+USB timing is checked with one wireless mouse on an 8000 Hz receiver. Its USB-side times come from Windows' USB stack,
+not the USB cable, and it is not a click-to-screen latency. It covers USB devices on Windows' current USB stack (not
+Bluetooth, not older EHCI controllers). It never changes the delivery score. Everything from 1.0.0 still applies — see
+the README (**Tested hardware**, **Known limitations**, **Is it safe?**).
 
 ## System requirements
 
@@ -45,12 +44,12 @@ in the README (**Tested hardware**, **Known limitations**, **Is it safe?**).
   included — unzip the whole folder and run `InputLab.exe`.
 - **Unsigned.** On the first run Windows SmartScreen may say "Windows protected your PC" — click **More info → Run
   anyway**. With Smart App Control switched on, Windows blocks the app (there is no "Run anyway").
-- Your data stays in `Documents\InputLab`; AleksMouseTester and AleksControllerTester keep running side by side.
+- USB timing needs administrator rights for each recorded test (Windows asks); everything else runs without.
 
 ## Verify the download
 
 - The zip's **SHA-256** is on the release page. Check it in PowerShell:
-  `Get-FileHash .\InputLab-v1.0.0-win-x64.zip -Algorithm SHA256`
+  `Get-FileHash .\InputLab-v1.1.0-win-x64.zip -Algorithm SHA256`
 - Inside the zip, `SHA256SUMS.txt` lets you check every file — in git-bash or WSL: `sha256sum -c SHA256SUMS.txt`
 - `BUILDINFO.txt` names the source commit, the .NET SDK, the bundled .NET runtime and the pinned obfuscation-tool
   version.
