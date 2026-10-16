@@ -1,0 +1,29 @@
+InputLab - Terms of Use
+
+Copyright (c) 2026 Aleksandar Krstic. All rights reserved.
+
+InputLab ("the Software") is provided free of charge, as-is.
+
+You MAY:
+  - Use the Software on your own machines, free of charge, for personal or
+    commercial purposes.
+  - Share the original, unmodified release archive with others.
+
+You MAY NOT:
+  - Sell the Software or charge others for access to it.
+  - Modify, decompile, reverse-engineer, or redistribute modified versions.
+
+Third-party components bundled with the Software (the .NET runtime) are
+licensed under their own terms, which these terms do not restrict; see
+THIRD-PARTY-NOTICES.txt and DOTNET-RUNTIME-THIRD-PARTY-NOTICES.TXT in the
+release archive.
+
+Product names such as Xbox, DualSense, DualShock, Nintendo Switch or Steam
+that appear in the Software or its documentation are trademarks of their
+respective owners. The Software is not affiliated with or endorsed by them.
+
+NO WARRANTY. THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. IN NO EVENT SHALL THE
+AUTHOR BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY ARISING FROM, OUT
+OF, OR IN CONNECTION WITH THE SOFTWARE OR ITS USE.
