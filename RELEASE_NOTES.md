@@ -1,42 +1,20 @@
-# InputLab v1.1.0 — USB timing: your mouse at the USB controller and at the app, on one clock
+# InputLab v1.1.1 — mice named as they name themselves
 
-**InputLab 1.1.0 adds USB timing to the Mouse level. On its USB timing tab, press "Start USB Timing" and see every report twice: when
-Windows' USB stack received it, and when it reached InputLab — the way a game gets it. Every hiccup is marked where it
-started: before Windows (the mouse, its radio or its sensor) or inside your PC.**
+**A patch release with two fixes after the first reports from the field. Everything from 1.1.0 (USB timing) is
+unchanged.**
 
-## What's new
+## Fixed
 
-- **USB timing (Lab).** On the Mouse level's new **USB timing** tab, the start button reads **Start USB Timing**: the
-  quick test set in the setup row, and it also records the USB stack's own completion events (Event Tracing for Windows; Windows asks
-  for administrator rights for each such test). On the other tabs Start Quick Test stays without it, so your
-  score is measured undisturbed. Afterwards every report is paired with its USB completion — on the
-  developer's 8000 Hz receiver, every single one.
-- **One clock, three lanes.** The time between reports at the USB controller, how long Windows took to hand each report
-  to the app, and the time between reports at InputLab. Each lane centres its typical value, the numbers follow the
-  zoom, and single reports appear as dots when you zoom in. Zoom buttons (whole run down to 1 ms), wheel zoom down to
-  half a millisecond, Shift+drag to zoom to a range, an overview strip, hover for one report's numbers, CSV export.
-- **The chain in one picture:** your mouse › USB controller › InputLab, with the numbers on each link
-  ("every 125 µs", "hand-over 50 µs typical, 99 % within 95 µs").
-- **A measurement check.** The recording makes Windows do extra work on the path InputLab measures. So every run with
-  it is compared with your latest runs of the same mouse and test without it, and the tab says plainly whether the
-  recording changed anything. Such runs are marked and kept apart in Compare. The trace asks Windows only for the events
-  it reads, which halves its extra work.
-- **Fixed:** mouse sessions now name their real capture path (Raw Input mouse); 1.0.0 labelled them with the
-  controller's model. Older runs show the corrected label; measurements and scores are unchanged.
-
-## Thanks
-
-A big thank-you to [XBAB-Tech](https://github.com/XBAB-Tech) for pointing out how much ETW-based timing adds to a
-mouse test. Their [MousePlotter](https://github.com/XBAB-Tech/MousePlotter) pairs the mouse's USB completions from
-Event Tracing for Windows with Raw Input, and that is what got InputLab's USB timing started. InputLab's
-implementation is its own; no code was taken.
-
-## Honest limits
-
-USB timing is checked with one wireless mouse on an 8000 Hz receiver. Its USB-side times come from Windows' USB stack,
-not the USB cable, and it is not a click-to-screen latency. It covers USB devices on Windows' current USB stack (not
-Bluetooth, not older EHCI controllers). It never changes the delivery score. Everything from 1.0.0 still applies — see
-the README (**Tested hardware**, **Known limitations**, **Is it safe?**).
+- **Mice are named as they name themselves.** The mouse picker and your saved runs now show the name the mouse
+  reports itself (its USB product string, e.g. "Endgame Gear OP1 8k v2 Gaming Mouse"). The vendor table behind it is
+  only a fallback, now checked against the USB-IF vendor list. 1.1.0 and earlier called an Endgame Gear mouse
+  (vendor 3367) a "Finalmouse", a Finalmouse (361D) a "Pulsar" and a Keychron (3434) a "Wooting", and showed chip makers
+  such as SinoWealth as the brand. Saved runs with such a label are corrected when they load; measurements and scores
+  are unchanged. Thanks to the users who reported it.
+- **USB timing says why Windows refused the trace.** The recording always runs with administrator rights, so the old
+  message "it needs administrator rights" was wrong. Windows refuses it while a game's kernel anti-cheat is still
+  loaded (seen with EA AntiCheat). The tab now says so: close the game, wait a moment and try again. InputLab does not
+  try to work around an anti-cheat.
 
 ## System requirements
 
@@ -49,7 +27,7 @@ the README (**Tested hardware**, **Known limitations**, **Is it safe?**).
 ## Verify the download
 
 - The zip's **SHA-256** is on the release page. Check it in PowerShell:
-  `Get-FileHash .\InputLab-v1.1.0-win-x64.zip -Algorithm SHA256`
+  `Get-FileHash .\InputLab-v1.1.1-win-x64.zip -Algorithm SHA256`
 - Inside the zip, `SHA256SUMS.txt` lets you check every file — in git-bash or WSL: `sha256sum -c SHA256SUMS.txt`
 - `BUILDINFO.txt` names the source commit, the .NET SDK, the bundled .NET runtime and the pinned obfuscation-tool
   version.
