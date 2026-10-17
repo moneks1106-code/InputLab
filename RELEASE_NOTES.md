@@ -1,20 +1,35 @@
-# InputLab v1.1.1 — mice named as they name themselves
+# InputLab v1.2.0 — Interrupts: which CPU core holds up your mouse, measured, and a fix you can undo
 
-**A patch release with two fixes after the first reports from the field. Everything from 1.1.0 (USB timing) is
-unchanged.**
+**InputLab 1.2.0 adds System › Interrupts. It shows which CPU core each device's interrupts use, measures during a
+10-second mouse test whether a driver holds up your mouse's USB work there, and — only when it does — moves your mouse's
+USB controller to another core. Reversible, and measured before and after.**
 
-## Fixed
+## What's new
 
-- **Mice are named as they name themselves.** The mouse picker and your saved runs now show the name the mouse
-  reports itself (its USB product string, e.g. "Endgame Gear OP1 8k v2 Gaming Mouse"). The vendor table behind it is
-  only a fallback, now checked against the USB-IF vendor list. 1.1.0 and earlier called an Endgame Gear mouse
-  (vendor 3367) a "Finalmouse", a Finalmouse (361D) a "Pulsar" and a Keychron (3434) a "Wooting", and showed chip makers
-  such as SinoWealth as the brand. Saved runs with such a label are corrected when they load; measurements and scores
-  are unchanged. Thanks to the users who reported it.
-- **USB timing says why Windows refused the trace.** The recording always runs with administrator rights, so the old
-  message "it needs administrator rights" was wrong. Windows refuses it while a game's kernel anti-cheat is still
-  loaded (seen with EA AntiCheat). The tab now says so: close the game, wait a moment and try again. InputLab does not
-  try to work around an anti-cheat.
+- **A core map.** A tile per CPU core with the devices whose interrupts are expected there: USB controllers (the one your
+  mouse hangs on marked), graphics card, audio, network, NVMe and SATA. Read only, no administrator rights.
+- **Measure: move your mouse for 10 s.** A Mouse Motion test while Windows Performance Recorder (part of Windows)
+  records the kernel's interrupts and deferred calls (Windows asks for administrator rights). You get: on which CPU your
+  mouse's USB work really ran, how long it waited after its interrupt, which driver it waited behind, and whether that
+  driver runs in your monitor's refresh beat. On the two PCs it was developed with, the mouse waited behind the NVIDIA
+  graphics driver on CPU 0 — on a 500 Hz monitor in its exact 2000 µs beat.
+- **The fix, only after a finding.** "Move my mouse's USB controller to CPU n" moves only that controller's interrupts to
+  another physical core. You see the change before it happens; the current values are saved first; it takes effect
+  after a restart; **Undo the change** puts them back exactly. A setting made by hand or by another tool can be reset
+  to Windows' default the same way.
+- **Before and after.** After the restart: "Measure after the fix", then both measurements side by side. If nothing
+  measurably improved, the tab says so and points to the undo.
+- **Fixed:** the mouse report speaks about mouse reports (not controller reports), fills its environment rows (VBS,
+  Memory Integrity, Energy Saver, Steam, …) and names the numbers behind its problem text.
+
+## Honest limits
+
+The measurement and the fix are checked on two PCs (Ryzen 9800X3D, NVIDIA graphics). Each measurement and each change
+needs administrator rights; a game with a kernel anti-cheat must be closed (it blocks the recording). A desktop
+measurement shows less load than a game, and firmware interrupts (SMIs) are invisible to Windows. The fix needs a
+restart and changes only one device's interrupt affinity — no MSI or priority settings, no boot settings. It is
+offered only when the measurement finds your mouse held up; sharing CPU 0 alone is common and often harmless. Everything
+from 1.1 still applies — see the README (**Known limitations**, **Is it safe?**).
 
 ## System requirements
 
@@ -22,12 +37,13 @@ unchanged.**
   included — unzip the whole folder and run `InputLab.exe`.
 - **Unsigned.** On the first run Windows SmartScreen may say "Windows protected your PC" — click **More info → Run
   anyway**. With Smart App Control switched on, Windows blocks the app (there is no "Run anyway").
-- USB timing needs administrator rights for each recorded test (Windows asks); everything else runs without.
+- USB timing, the interrupt measurement and the interrupt fix need administrator rights (Windows asks each time);
+  everything else runs without.
 
 ## Verify the download
 
 - The zip's **SHA-256** is on the release page. Check it in PowerShell:
-  `Get-FileHash .\InputLab-v1.1.1-win-x64.zip -Algorithm SHA256`
+  `Get-FileHash .\InputLab-v1.2.0-win-x64.zip -Algorithm SHA256`
 - Inside the zip, `SHA256SUMS.txt` lets you check every file — in git-bash or WSL: `sha256sum -c SHA256SUMS.txt`
 - `BUILDINFO.txt` names the source commit, the .NET SDK, the bundled .NET runtime and the pinned obfuscation-tool
   version.
