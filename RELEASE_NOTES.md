@@ -42,7 +42,7 @@
 - **Mouse › Result: "During this run".** Under "What to do", what else ran on your PC during the run — CPU, DPC and
   interrupt time (also on the CPU your mouse's USB controller is expected on), the busiest programs, the programs that
   started or ended (a start during the run is marked on the interval plot at its second) — and InputLab's own share:
-  its CPU time, the garbage collections in the window, the paused live view, a trace or none. Read right before and
+  its CPU time (counted in the CPU's cycles), the garbage collections in the window, the paused live view, a trace or none. Read right before and
   right after the run, never during it; no administrator rights. It says "at the same time, not the cause" and changes
   no score. A check with and without it found no visible effect on the measurement.
 
@@ -58,6 +58,10 @@
 
 ## Fixed
 
+- **Mouse: "Delivery rate (host)" is the USB rate.** It was 1 ÷ the most common interval, and on some PCs the
+  intervals split into two peaks 6 µs either side of 125 µs (8,403 Hz at 8 kHz). It is now the USB rate the mouse's reports arrive on
+  (8,000 Hz at 8 kHz), and gaps are counted against that slot: a missing report is always a gap, a slightly late one
+  never. Of 291 saved runs checked, 9 would have scored differently. Runs saved before keep their values and scores.
 - **Display scaling: nothing is cut off any more.** At 125–200 % (Full HD, 1440p, 1366 × 768 laptops) pages lost parts
   ("What to do", the controller's tiles, the last rows of the score breakdown) and text was cut inside its own box,
   because the fonts grew but the fixed sizes did not. Every size now follows the display's scale, a page with too
