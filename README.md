@@ -10,6 +10,8 @@ Many testers show a polling-rate number. InputLab timestamps every Raw Input rep
 
 **Free, and it stays free.** If it helps you, you can [support it](#support) with a voluntary donation — nothing is unlocked by it.
 
+**Community:** questions, results and updates on the [InputLab Discord](https://discord.gg/3kEktvD4zm).
+
 ## What it does
 
 Five levels, one tab each at the top (Ctrl+1 … Ctrl+5):
@@ -131,6 +133,8 @@ Found a bug, or measured a device that isn't listed above? Please open an issue 
 - the device model, the connection (USB cable / receiver / Bluetooth) and, for a controller, its mode (XInput / D-input / Switch / PlayStation),
 - your **Stick Motion** or **Mouse Motion** result (score and report rate),
 - the exported Markdown report (**Export report**) of that run — it lists the device, the results and some PC context (no user or computer name, an anonymized device id); have a quick look before you post it.
+
+Questions, results and quick help are also welcome on the [InputLab Discord](https://discord.gg/3kEktvD4zm).
 
 ## Support
 
