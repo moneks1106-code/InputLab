@@ -6,7 +6,7 @@ Most testers print one number, the polling rate. That number usually looks fine 
 
 I build it alone, in my spare time. It started as a mouse tester, then came a controller tester, and since October 2026 both are one app. A lot of what is in it today exists because people ran it on their own PCs and told me what they saw, what confused them and where it was wrong.
 
-**Version 1.4.1.** What changed in each version is on the [Releases](../../releases) page and in `RELEASE_NOTES.md` inside the download.
+**Version 1.5.0.** What changed in each version is on the [Releases](../../releases) page and in `RELEASE_NOTES.md` inside the download.
 
 It is free and it stays free. If it helps you, you can [support it](#support); nothing is unlocked by that. Questions, results and quick help: the [InputLab Discord](https://discord.gg/3kEktvD4zm).
 
@@ -64,8 +64,8 @@ Yes. InputLab is not a virus, not spyware and not a miner. It is a measurement t
 
 Here is what stands behind that:
 
-- **No network, no telemetry.** There is no network code in InputLab: nothing leaves your PC, no tracking, no account, no update check. Your runs are stored in `Documents\InputLab`, a small error log in `%LocalAppData%\InputLab\logs`. The **♥ Support** button does not change that: only your web browser opens the PayPal link, and only when you click **Open PayPal**.
-- **It only listens to your devices.** It sends nothing to your mouse or controller: no settings, no firmware, no rumble. It installs no driver and no service. Games and other programs get your input as usual.
+- **No telemetry, nothing to the internet.** InputLab sends nothing to the internet: no tracking, no account, no update check. Your runs are stored in `Documents\InputLab`, a small error log in `%LocalAppData%\InputLab\logs`. There is no network code. The **♥ Support** button does not change that: only your web browser opens the PayPal link, and only when you click **Open PayPal**.
+- **It changes nothing on your devices.** No settings, no firmware, no rumble. It installs no driver and no service. Measuring only listens. Games and other programs get your input as usual.
 - **It changes Windows only when you click.** There are exactly three settings it can write, each one saves the original first and has a button that puts it back. All of them are listed in [the next section](#what-inputlab-changes-on-your-pc).
 - **Administrator rights are the exception.** Windows itself asks, each time, and only for four things: the USB timing recording, the interrupt recording, writing or undoing an interrupt layout, and changing whether Windows may switch a device off. Those steps do one thing each and refuse anything that is not exactly what the app asked for. Everything else runs without them, so start InputLab normally, not as administrator.
 - **It is tested.** Every release is built from a recorded commit and goes through more than two thousand automated tests before it leaves my PC.
@@ -86,9 +86,11 @@ By itself: nothing. InputLab reads and measures. It writes to Windows in the thr
 
 | What | Where exactly | When | The saved original | The way back |
 |---|---|---|---|---|
-| A power-plan value: USB selective suspend, USB 3 link power management, PCI Express link state power management, minimum / maximum processor state, CPU core parking | The active power plan, for the power source in use. These are the values of Control Panel › Power Options › Change advanced power settings, written with Windows' own power API. No administrator rights. | System › Power, the button on that setting's card | `Documents\InputLab\power-restore.json`, one original per power plan and power source | **Restore** on the same card, while that power plan is active |
-| "Allow the computer to turn off this device to save power" for an input device and the hubs it hangs on | The checkbox of Device Manager › Power Management, set through Windows' `MSPower_DeviceEnable`. Windows asks for administrator rights. | System › Power, **Don't allow** on the device's card | the same file | **Restore** on the same card |
+| A power-plan value: USB selective suspend, USB 3 link power management, PCI Express link state power management, minimum / maximum processor state, CPU core parking | The active power plan, for the power source in use. These are the values of Control Panel › Power Options › Change advanced power settings, written with Windows' own power API. No administrator rights. | System › Power, the button on that setting's card | `Documents\InputLab\power-restore.json`, one original per power plan and power source | **Restore** on the same card, while that power plan is active; **Restore all** at the top of System › Power puts back every saved value at once, on every power plan and power source |
+| "Allow the computer to turn off this device to save power" for an input device and the hubs it hangs on | The checkbox of Device Manager › Power Management, set through Windows' `MSPower_DeviceEnable`. Windows asks for administrator rights. | System › Power, **Don't allow** on the device's card | the same file | **Restore** on the same card, or **Restore all** |
 | The interrupt affinity of a device (which CPU handles its interrupts) | Registry: `HKLM\SYSTEM\CurrentControlSet\Enum\<device>\Device Parameters\Interrupt Management\Affinity Policy`, the two documented values `DevicePolicy` and `AssignmentSetOverride`. Windows asks for administrator rights; it takes effect after a restart. | System › Interrupts: the fix after a measurement, or **Write** in the layout editor, after you confirmed the shown change | `%ProgramData%\InputLab\affinity-backups` | **Undo the change** on the Interrupts tab |
+
+Test builds before 1.5 had a benchmark that moved devices for the time of a run. If such a run was cut off (a crash, a power cut, a device that did not come back), InputLab says so at its start and on System › Interrupts, where the button reads **Put the devices back**. The way back without InputLab's window: press Win+R, type the full path of InputLab.exe in quotes followed by `--recover` (for example `"C:\Tools\InputLab\InputLab.exe" --recover`) and press Enter, or run `Put the devices back.cmd` in `%ProgramData%\InputLab\affinity-backups`; confirm Windows' prompt, then restart Windows. `--recover` puts back only what such a run left; a fix or a layout you wrote yourself is never touched. In that folder it keeps the saved originals, a journal per run and `last-recovery.txt` (what the last way back did). If the mouse, the keyboard or the picture no longer work: restart the PC (hold the power button if you must), then do the above.
 
 While a test you started runs, three more things happen:
 
@@ -96,9 +98,9 @@ While a test you started runs, three more things happen:
 - **Write and restart…** restarts Windows, after your confirmation and a 10-second countdown that **Cancel restart** stops.
 - Home's timer test asks Windows for a 1 ms timer for InputLab's own process for a moment and releases it.
 
-Files it writes: `Documents\InputLab` (your runs, settings, the port map, the saved originals above), `%LocalAppData%\InputLab` (the log and the last recording of USB timing and of the interrupt measurement), `%ProgramData%\InputLab\affinity-backups`, and an export wherever you choose to save it. To remove InputLab, use **Restore** / **Undo the change** where you changed something, then delete its folder and these three.
+Files it writes: `Documents\InputLab` (your runs, settings, the port map, the saved originals above), `%LocalAppData%\InputLab` (the log, the last recording of USB timing and of the interrupt measurement), `%ProgramData%\InputLab\affinity-backups`, and an export wherever you choose to save it. To remove InputLab, use **Restore all** on System › Power and **Undo the change** on System › Interrupts where you changed something, then delete its folder and these three.
 
-What it never does: install a driver or a service, add an autostart entry or a scheduled task, change a boot setting, an interrupt priority or a device's MSI mode, touch the BIOS, open a game or an anti-cheat, send anything to your mouse or controller, or connect to the internet.
+What it never does: install a driver or a service, add an autostart entry or a scheduled task, change a boot setting, an interrupt priority or a device's MSI mode, touch the BIOS, open a game or an anti-cheat, change a setting or the firmware of your mouse or controller, or send anything to the internet.
 
 On a laptop: the power settings above exist to save battery. Switching them off costs battery life and heat. A change made on battery is saved and restored for the battery values, one made on mains power for the mains values.
 
@@ -177,8 +179,8 @@ General
 **System.**
 
 - **USB map**: every USB controller, hub, socket and device, with link speed and how often each device is polled. One sentence on top says how things stand, a list says what to check and why, with its source. No score. Re-plug a device and the map reads itself again.
-- **Interrupts**: a tile per CPU core with the devices expected there. **Measure** runs Mouse Motion for 10 seconds while Windows records its interrupts, then shows on which core your mouse's USB work ran, how long it waited and behind which driver. The driver check under it goes through the run's gaps one by one. **Edit layout** lets you drag devices onto cores, **Suggest a layout** fills it in with a reason for every device, **Write and restart…** applies it, and **Undo the change** puts everything back.
-- **Power**: USB selective suspend, USB 3 and PCI Express link power management, processor states, core parking, Energy Saver and whether Windows may switch your input devices off. Each with what it does, what is known about it, and a button with **Restore**.
+- **Interrupts**: a tile per CPU core with the devices expected there. **Measure** runs Mouse Motion for 10 seconds while Windows records its interrupts, then shows on which core your mouse's USB work ran, how long it waited and behind which driver. The driver check under it goes through the run's gaps one by one. **Edit layout** lets you drag devices onto cores, **Suggest a layout** fills in the layout by the rules when a measurement found a driver in your mouse's way; where your graphics card, network card or the USB controller of your mouse or keyboard sits on Windows' default or core 0, it fills in the layout by the rules and says that it was not measured; otherwise it suggests nothing. **Write and restart…** applies it, and **Undo the change** puts everything back.
+- **Power**: USB selective suspend, USB 3 and PCI Express link power management, processor states, core parking, Energy Saver and whether Windows may switch your input devices off. Each with what it does, what is known about it, and a button with **Restore**; **Restore all** puts back everything InputLab changed there at once.
 
 **Wireless.** Pick your receiver, answer two questions (where is the socket, what is plugged in next to it), and read what fits. **Before / after** puts two runs side by side.
 
